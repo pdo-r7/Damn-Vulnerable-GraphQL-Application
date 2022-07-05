@@ -223,26 +223,9 @@
 
     function import_paste() {
       const url = document.getElementById('url').value;
-      const u = new URL(url);
-      const host = u.hostname;
-      const path = u.pathname;
-      const scheme = u.protocol.replace(':', '');
-      var port = u.port;
 
-      if(!port) {
-        if(scheme == 'http') {
-          port = 80
-        }
-        else if(scheme == 'https') {
-          port = 443
-        }
-        else {
-          port = 80
-        }
-      }
-
-      var query = `mutation ImportPaste ($host: String!, $port: Int!, $path: String!, $scheme: String!) {
-        importPaste(host: $host, port: $port, path: $path, scheme: $scheme) {
+      var query = `mutation ImportPaste ($url: String!) {
+        importPaste(url: $url) {
           result
         }
       }`
@@ -255,7 +238,7 @@
         },
         body: JSON.stringify({
           query,
-          variables: {host, port, path, scheme}
+          variables: {url}
         })
       }).then(
         r => r.json()

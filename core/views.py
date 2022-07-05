@@ -202,13 +202,10 @@ class ImportPaste(graphene.Mutation):
   result = graphene.String()
 
   class Arguments:
-    host = graphene.String(required=True)
-    port = graphene.Int(required=False)
-    path = graphene.String(required=True)
-    scheme = graphene.String(required=True)
+    url = graphene.String(required=True)
 
-  def mutate(self, info, host='pastebin.com', port=443, path='/', scheme="http"):
-    url = security.strip_dangerous_characters(f"{scheme}://{host}:{port}{path}")
+  def mutate(self, info, url='http://pastebin.com:443/'):
+    url = security.strip_dangerous_characters(url)
     cmd = helpers.run_cmd(f'curl --insecure {url}')
 
     owner = Owner.query.filter_by(name='DVGAUser').first()
