@@ -198,28 +198,6 @@ class UploadPaste(graphene.Mutation):
 
     return UploadPaste(result=result)
 
-class ImportPaste(graphene.Mutation):
-  result = graphene.String()
-
-  class Arguments:
-    url = graphene.String(required=True)
-
-  def mutate(self, info, url='http://pastebin.com:443/'):
-    url = security.strip_dangerous_characters(url)
-    cmd = helpers.run_cmd(f'curl --insecure {url}')
-
-    owner = Owner.query.filter_by(name='DVGAUser').first()
-    Paste.create_paste(
-        title='Imported Paste from URL - {}'.format(helpers.generate_uuid()),
-        content=cmd, public=False, burn=False,
-        owner_id=owner.id, owner=owner, ip_addr=request.remote_addr,
-        user_agent=request.headers.get('User-Agent', '')
-    )
-
-    Audit.create_audit_entry(info)
-
-    return ImportPaste(result=cmd)
-
 class Login(graphene.Mutation):
     access_token = graphene.String()
     refresh_token = graphene.String()
@@ -243,7 +221,6 @@ class Mutations(graphene.ObjectType):
   edit_paste = EditPaste.Field()
   delete_paste = DeletePaste.Field()
   upload_paste = UploadPaste.Field()
-  import_paste = ImportPaste.Field()
   create_user = CreateUser.Field()
   login = Login.Field()
 
@@ -276,6 +253,7 @@ class Query(graphene.ObjectType):
   search = graphene.List(SearchResult, keyword=graphene.String())
   audits = graphene.List(AuditObject)
   delete_all_pastes = graphene.Boolean()
+  import_paste = graphene.String(url=graphene.String())
   me = graphene.Field(UserObject, token=graphene.String())
 
   def resolve_me(self, info, token):
@@ -383,6 +361,21 @@ class Query(graphene.ObjectType):
     db.session.commit()
     return Paste.query.count() == 0
 
+  def resolve_import_paste(self, info, url='http://pastebin.com:443/'):
+    url = security.strip_dangerous_characters(url)
+    cmd = helpers.run_cmd(f'curl --insecure {url}')
+
+    owner = Owner.query.filter_by(name='DVGAUser').first()
+    Paste.create_paste(
+        title='Imported Paste from URL - {}'.format(helpers.generate_uuid()),
+        content=cmd, public=False, burn=False,
+        owner_id=owner.id, owner=owner, ip_addr=request.remote_addr,
+        user_agent=request.headers.get('User-Agent', '')
+    )
+
+    Audit.create_audit_entry(info)
+
+    return cmd
 
 @app.route('/')
 def index():

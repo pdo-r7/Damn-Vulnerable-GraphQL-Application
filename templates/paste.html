@@ -224,10 +224,8 @@
     function import_paste() {
       const url = document.getElementById('url').value;
 
-      var query = `mutation ImportPaste ($url: String!) {
-        importPaste(url: $url) {
-          result
-        }
+      var query = `query ImportPaste ($url: String!) {
+        importPaste(url: $url) 
       }`
 
       fetch('/graphql', {
