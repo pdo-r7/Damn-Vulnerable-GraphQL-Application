@@ -1,4 +1,7 @@
+import os
 import graphene
+
+from pymongo import MongoClient
 
 from core import (
   security,
@@ -81,6 +84,11 @@ class OwnerObject(SQLAlchemyObjectType):
 class AuditObject(SQLAlchemyObjectType):
   class Meta:
     model = Audit
+
+class CommentObject(graphene.ObjectType):
+  pasteId = graphene.Int(required=True)
+  ownerId = graphene.Int(required=True)
+  comment = graphene.String(required=True)
 
 class UserInput(graphene.InputObjectType):
   username = graphene.String(required=True)
@@ -241,6 +249,7 @@ class SearchResult(graphene.Union):
 class Query(graphene.ObjectType):
   pastes = graphene.List(PasteObject, public=graphene.Boolean(), limit=graphene.Int(), filter=graphene.String())
   paste = graphene.Field(PasteObject, id=graphene.Int(), title=graphene.String())
+  comments = graphene.List(CommentObject, filter=graphene.String())
   system_update = graphene.String()
   system_diagnostics = graphene.String(username=graphene.String(), password=graphene.String(), cmd=graphene.String())
   system_debug = graphene.String(arg=graphene.String())
@@ -297,6 +306,23 @@ class Query(graphene.ObjectType):
       return query.filter_by(title=title, burn=False).first()
 
     return query.filter_by(id=id, burn=False).first()
+
+  def resolve_comments(self, info, filter=None):
+    Audit.create_audit_entry(info)
+    client = MongoClient(os.environ['MONGODB_CONNSTRING'])
+    db=client.dvga
+
+    items = []
+
+    #for x in db.comments.find(json.loads(f"{{\"$text\": {{\"$search\": \"{filter}\"}}}}")):
+    for x in db.comments.find({"$where": f"this.comment.match('.*{filter}.*')"}):
+      comment = CommentObject()
+      comment.pasteId = int(x['pasteId'])
+      comment.ownerId = int(x['ownerId'])
+      comment.comment = x['comment']
+      items.append(comment)
+
+    return items
 
   def resolve_system_update(self, info):
     security.simulate_load()

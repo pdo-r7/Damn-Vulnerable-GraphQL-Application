@@ -28,6 +28,7 @@ pluggy==1.0.0
 promise==2.3
 py==1.11.0
 PyJWT==1.7.1
+pymongo==4.1.1
 pyparsing==3.0.9
 Pypubsub==4.0.3
 pytest==7.0.1

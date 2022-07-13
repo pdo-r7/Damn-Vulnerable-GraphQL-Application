@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  dvga:
+    image: dvga
+    container_name: dvga
+    build:
+      dockerfile: Dockerfile
+      context: .
+    environment:
+      - WEB_HOST=0.0.0.0
+      - MONGODB_CONNSTRING=mongodb://root:password@mongo
+    ports:
+      - 5013:5013
+    networks:
+      - dvga_default
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: dvga
+    networks:
+      - dvga_default
+    volumes:
+      - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d/
+networks:
+  dvga_default:
+    name: dvga_default
