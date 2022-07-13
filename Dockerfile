@@ -21,6 +21,7 @@ ADD --chown=dvga:dvga core /opt/dvga/core
 ADD --chown=dvga:dvga db /opt/dvga/db
 ADD --chown=dvga:dvga static /opt/dvga/static
 ADD --chown=dvga:dvga templates /opt/dvga/templates
+ADD --chown=dvga:dvga reports /opt/dvga/reports
 
 COPY --chown=dvga:dvga app.py /opt/dvga
 COPY --chown=dvga:dvga config.py /opt/dvga

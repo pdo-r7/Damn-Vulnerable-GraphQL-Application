@@ -254,6 +254,7 @@ class Query(graphene.ObjectType):
   system_diagnostics = graphene.String(username=graphene.String(), password=graphene.String(), cmd=graphene.String())
   system_debug = graphene.String(arg=graphene.String())
   system_health = graphene.String()
+  report = graphene.String(name=graphene.String())
   users = graphene.List(UserObject, id=graphene.Int())
   read_and_burn = graphene.Field(PasteObject, id=graphene.Int())
   search = graphene.List(SearchResult, keyword=graphene.String())
@@ -361,6 +362,12 @@ class Query(graphene.ObjectType):
     return 'System Load: {}'.format(
       helpers.run_cmd("uptime | awk -F': ' '{print $2}' | awk -F',' '{print $1}'")
     )
+
+  def resolve_report(self, info, name):
+    Audit.create_audit_entry(info)
+
+    f = open(f'/opt/dvga/reports/{name}', "r")
+    return f.read()
 
   def resolve_users(self, info, id=None):
     query = UserObject.get_query(info)
