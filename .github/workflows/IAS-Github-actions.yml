@@ -1,4 +1,4 @@
- name: Ias Scan
+ name: IAS Scan
  on:
    push:
      branches: [ master ]
