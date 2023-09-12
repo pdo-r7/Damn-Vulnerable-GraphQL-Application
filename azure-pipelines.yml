@@ -35,6 +35,6 @@ stages:
         generateFindingsReport: true
         hasTimeout: false
         hasScanGating: true
-        vulnQuery: 'vulnerability.severity = 'MEDIUM''
+        vulnQuery: 'vulnerability.severity='MEDIUM''
         publishPipelineArtifacts: true
         artifactPerReport: true
