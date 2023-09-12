@@ -27,3 +27,14 @@ stages:
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
         tags: |
           $(tag)
+    - task: rapid7-insightappsec@1
+      inputs:
+        apiConnection: 'Pete - IAS - Azure devops'
+        application: '6ebdb7d8-1447-43a5-bb1e-d2d266e75708'
+        scanConfig: 'DVWA'
+        generateFindingsReport: true
+        hasTimeout: false
+        hasScanGating: true
+        vulnQuery: 'vulnerability.severity=''HIGH'''
+        publishPipelineArtifacts: true
+        artifactPerReport: true
