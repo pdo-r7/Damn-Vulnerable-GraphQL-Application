@@ -30,11 +30,11 @@ stages:
     - task: rapid7-insightappsec@1
       inputs:
         apiConnection: 'Pete - IAS - Azure devops'
-        application: '6ebdb7d8-1447-43a5-bb1e-d2d266e75708'
-        scanConfig: 'DVWA'
+        application: '9bc9e867-5512-4bf8-bd36-d3a9c31bb78f'
+        scanConfig: 'Azure Test'
         generateFindingsReport: true
         hasTimeout: false
         hasScanGating: true
-        vulnQuery: 'vulnerability.severity=''HIGH'''
+        vulnQuery: 'vulnerability.severity=''HIGH''OR''Medium'''
         publishPipelineArtifacts: true
         artifactPerReport: true
