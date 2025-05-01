@@ -9,7 +9,7 @@
        - id: my-scan
          uses: rapid7/insightappsec-scan-github-actions@v1.3.1
          with:
-           region: "us"
+           region: "us2"
            api-key: ${{ secrets.IAS_API_KEY }}
            scan-config-id: "afb8674a-f911-4f3c-ac62-50e2d45d05f2"
            vuln-query: "vulnerability.severity = 'HIGH'"
