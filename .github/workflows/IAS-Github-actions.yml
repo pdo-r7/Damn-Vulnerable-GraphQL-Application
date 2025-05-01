@@ -1,4 +1,4 @@
- name: Ias Scan
+ name: IAS Scan
  on:
    push:
      branches: [ master ]
@@ -11,7 +11,7 @@
          with:
            region: "us"
            api-key: ${{ secrets.IAS_API_KEY }}
-           scan-config-id: "6dd4636d-c8e4-44bc-b86b-97bfd733158a"
+           scan-config-id: "afb8674a-f911-4f3c-ac62-50e2d45d05f2"
            vuln-query: "vulnerability.severity = 'HIGH'"
        - name: Upload findings
          if: always()
